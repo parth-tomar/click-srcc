@@ -169,6 +169,7 @@ window.addEventListener('DOMContentLoaded', function() {
   bindModal('viewTeacherInChargeBtn', 'teacherInChargeModal', 'closeTeacherInChargeModal');
 });
 
+
 // ── Scroll reveal ──
 var revealObs=new IntersectionObserver(function(entries){
   entries.forEach(function(e){
