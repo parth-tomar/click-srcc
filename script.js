@@ -109,7 +109,9 @@ document.querySelectorAll('.g-tab').forEach(function(tab){
     document.querySelectorAll('.g-tab').forEach(function(t){t.classList.remove('active');});
     document.querySelectorAll('.g-group').forEach(function(g){g.classList.remove('active');});
     this.classList.add('active');
-    document.getElementById('tab-'+this.dataset.tab).classList.add('active');
+    var activeGroup=document.getElementById('tab-'+this.dataset.tab);
+    activeGroup.classList.add('active');
+    activeGroup.querySelectorAll('.reveal').forEach(function(el){revealObs.observe(el);});
   });
 });
 
@@ -133,35 +135,63 @@ document.querySelectorAll('.film-card').forEach(function(card){
 
 // ── All Members Modal ──
 window.addEventListener('DOMContentLoaded', function() {
-  var openBtn = document.getElementById('viewAllMembersBtn');
-  var modal = document.getElementById('allMembersModal');
-  var closeBtn = document.getElementById('closeAllMembersModal');
-  if (openBtn && modal && closeBtn) {
+  function bindModal(openId, modalId, closeId) {
+    var openBtn = document.getElementById(openId);
+    var modal = document.getElementById(modalId);
+    var closeBtn = document.getElementById(closeId);
+    if (!openBtn || !modal || !closeBtn) return;
+
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
     openBtn.addEventListener('click', function() {
       modal.style.display = 'flex';
       document.body.style.overflow = 'hidden';
     });
-    closeBtn.addEventListener('click', function() {
-      modal.style.display = 'none';
-      document.body.style.overflow = '';
-    });
+
+    closeBtn.addEventListener('click', closeModal);
+
     modal.addEventListener('click', function(e) {
-      if (e.target === modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
-      }
+      if (e.target === modal) closeModal();
     });
+
     document.addEventListener('keydown', function(e) {
       if (modal.style.display === 'flex' && (e.key === 'Escape' || e.key === 'Esc')) {
-        modal.style.display = 'none';
-        document.body.style.overflow = '';
+        closeModal();
       }
     });
   }
+
+  bindModal('viewAllMembersBtn', 'allMembersModal', 'closeAllMembersModal');
+  bindModal('wingNoteOpen', 'wingNoteModal', 'wingNoteClose');
+  bindModal('viewTeacherInChargeBtn', 'teacherInChargeModal', 'closeTeacherInChargeModal');
 });
 
 // ── Scroll reveal ──
 var revealObs=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('v');});
+  entries.forEach(function(e){
+    if(e.isIntersecting){
+      e.target.classList.add('v');
+      revealObs.unobserve(e.target);
+    }
+  });
 },{threshold:0.08});
+
+document.querySelectorAll('#tab-films .film-card').forEach(function(card,i){
+  card.classList.add('reveal');
+  card.style.transitionDelay=(120 + i*70)+'ms';
+});
+
+document.querySelectorAll('.team-section .tmcard').forEach(function(card,i){
+  card.classList.add('reveal');
+  card.style.transitionDelay=((i%3)*90)+'ms';
+});
+
+document.querySelectorAll('#tab-events-cov .cov-card').forEach(function(card,i){
+  card.classList.add('reveal');
+  card.style.transitionDelay=(120 + i*70)+'ms';
+});
+
 document.querySelectorAll('.reveal').forEach(function(el){revealObs.observe(el);});
