@@ -369,7 +369,9 @@ section{position:relative;z-index:2}
   color:var(--light);
   font-size:15px;
   line-height:1.8;
-  max-width:58ch;
+  width:100%;
+  max-width:none;
+  text-align:justify;
 }
 .wing-note-link{
   color:var(--y1);
